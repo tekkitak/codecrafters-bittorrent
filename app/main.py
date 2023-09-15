@@ -1,21 +1,9 @@
 from typing import Any
 import json
 import sys
+from bencode import Bencode
 
-# import bencodepy - available if you need it!
-# import requests - available if you need it!
-
-# Examples:
-#
-# - decode_bencode(b"5:hello") -> b"hello"
-# - decode_bencode(b"10:hello12345") -> b"hello12345"
-def decode_bencode(bencoded_value: bytes) -> Any:
-    if chr(bencoded_value[0]).isdigit():
-        length = int(bencoded_value.split(b":")[0])
-        return bencoded_value.split(b":")[1][:length]
-    else:
-        raise NotImplementedError("Only strings are supported at the moment")
-
+bc = Bencode()
 
 def main():
     command = sys.argv[1]
@@ -23,7 +11,7 @@ def main():
     # You can use print statements as follows for debugging, they'll be visible when running tests.
 
     if command == "decode":
-        bencoded_value = sys.argv[2].encode()
+        bencoded_value: bytes = sys.argv[2].encode()
 
         # json.dumps() can't handle bytes, but bencoded "strings" need to be
         # bytestrings since they might contain non utf-8 characters.
@@ -36,7 +24,7 @@ def main():
             raise TypeError(f"Type not serializable: {type(data)}")
 
         # Uncomment this block to pass the first stage
-        print(json.dumps(decode_bencode(bencoded_value), default=bytes_to_str))
+        print(json.dumps(bc.decode(bencoded_value), default=bytes_to_str))
     else:
         raise NotImplementedError(f"Unknown command {command}")
 
