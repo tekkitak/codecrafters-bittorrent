@@ -1,7 +1,7 @@
 from typing import Any
 import json
 import sys
-from bencode import Bencode
+from app.bencode import Bencode
 
 bc = Bencode()
 
@@ -24,7 +24,7 @@ def main():
             raise TypeError(f"Type not serializable: {type(data)}")
 
         # Uncomment this block to pass the first stage
-        print(json.dumps(bc.decode(bencoded_value), default=bytes_to_str))
+        print(bc.decode(bencoded_value))
     else:
         raise NotImplementedError(f"Unknown command {command}")
 
