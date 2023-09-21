@@ -5,6 +5,16 @@ from app.bencode import Bencode
 
 bc = Bencode()
 
+def decode(bcode: bytes):
+    def bytes_to_str(data: Any) -> str:
+        if isinstance(data, bytes):
+            return data.decode()
+
+        raise TypeError(f"Type not serializable: {type(data)}")
+
+    # Uncomment this block to pass the first stage
+    return json.dumps(bc.decode(bcode), default=bytes_to_str)
+
 def main():
     command = sys.argv[1]
 
@@ -13,18 +23,10 @@ def main():
     if command == "decode":
         bencoded_value: bytes = sys.argv[2].encode()
 
-        # json.dumps() can't handle bytes, but bencoded "strings" need to be
-        # bytestrings since they might contain non utf-8 characters.
-        #
-        # Let's convert them to strings for printing to the console.
-        def bytes_to_str(data: Any) -> str:
-            if isinstance(data, bytes):
-                return data.decode()
-
-            raise TypeError(f"Type not serializable: {type(data)}")
-
-        # Uncomment this block to pass the first stage
-        print(json.dumps(bc.decode(bencoded_value), default=bytes_to_str))
+        print(decode(bencoded_value))
+    elif command == "info":
+        with open(sys.argv[2], "rb") as f:
+            info: dict[str, Any] = decode(f.readline())
     else:
         raise NotImplementedError(f"Unknown command {command}")
 
