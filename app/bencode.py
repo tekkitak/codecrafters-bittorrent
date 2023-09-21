@@ -12,13 +12,24 @@ class Bencode():
 
     def decode(self, bcode: bytes) -> Any:
         cur_gen = self.__string_gen(bcode)
+        return self.__decode(cur_gen)
+
+    def __decode(self, cur_gen: BCGen) -> Any:
         ch = next(cur_gen)
         if ch == 'i': # Number
             return self.__decode_int(cur_gen)
         elif ch == 'l': # List
-            pass
+            l: list[Any] = []
+            while True:
+                decoded: Any = self.__decode(cur_gen)
+                if decoded == True:
+                    break
+                l.append(decoded)
+            return l
         elif ch == 'd': # Dict
             pass
+        elif ch == 'e': # End of block
+            return True
         elif ch.isdigit():
             s_len = ch
             while ch != ':':
