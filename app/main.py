@@ -26,7 +26,9 @@ def main():
         print(decode(bencoded_value))
     elif command == "info":
         with open(sys.argv[2], "rb") as f:
-            info: dict[str, Any] = decode(f.readline())
+            info: dict[str, Any] = bc.decode(f.readline())
+            print(f"Tracker URL: {info['announce']}")
+            print(f"Length: {info['info']['length']}")
     else:
         raise NotImplementedError(f"Unknown command {command}")
 
