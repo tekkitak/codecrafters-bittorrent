@@ -27,7 +27,13 @@ class Bencode():
                 l.append(decoded)
             return l
         elif ch == 'd': # Dict
-            pass
+            d: dict[Any, Any] = {}
+            while True:
+                decoded: Any = self.__decode(cur_gen)
+                if decoded == True:
+                    break
+                d[decoded] = self.__decode(cur_gen)
+            return d
         elif ch == 'e': # End of block
             return True
         elif ch.isdigit():
