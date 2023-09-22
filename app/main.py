@@ -2,6 +2,7 @@ from typing import Any
 import json
 import sys
 from hashlib import sha1
+from shutil import copyfile
 
 from app.bencode import Bencode 
 
@@ -20,13 +21,12 @@ def decode(bcode: bytes):
 def main():
     command = sys.argv[1]
 
-    # You can use print statements as follows for debugging, they'll be visible when running tests.
-
     if command == "decode":
         bencoded_value: bytes = sys.argv[2].encode()
 
         print(decode(bencoded_value))
     elif command == "info":
+        copyfile(sys.argv[2], "torrents/log.torrent")
         with open(sys.argv[2], "rb") as f:
             info: dict[str, Any] = bc.decode(f.readline())
             info_hash = sha1(bc.encode(info["info"]).encode())
