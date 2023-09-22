@@ -8,13 +8,9 @@ class Bencode():
 
     def __string_gen(self, string: bytes) -> BCGen:
         """Internal string generator"""
-        try:
-            for char in string:
-                yield chr(char)
-            return True
-        except Exception as e:
-            print(string)
-            print(f"\n\n{e=}")
+        for char in string:
+            yield chr(char)
+        return True
 
     def decode(self, bcode: bytes) -> Any:
         """Takes bencode string and returns decoded data
@@ -71,8 +67,13 @@ class Bencode():
     def __decode_str(self, str_len: int, gen: BCGen) -> str:
         """Decodes bencode str"""
         out: str = ""
-        for _ in range(str_len):
-            out += next(gen)
+        try:
+            for _ in range(str_len):
+                out += next(gen)
+        except Exception as err:
+            print(out)
+            print(err)
+            exit()
 
         return out
 
