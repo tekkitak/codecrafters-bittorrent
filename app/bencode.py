@@ -2,19 +2,29 @@ from typing import Any, Generator
 
 BCGen = Generator[str, None, bool]
 class Bencode():
+    """Decode and encode bencode"""
     def __init__(self):
         self.cur_gen: Generator[str,Any,bool]|None = None
 
     def __string_gen(self, string: bytes) -> BCGen:
+        """Internal string generator"""
         for char in string:
-            yield(chr(char))
+            yield chr(char)
         return True
 
     def decode(self, bcode: bytes) -> Any:
+        """Takes bencode string and returns decoded data
+
+        bcode -- Bencoded string
+        """
         cur_gen = self.__string_gen(bcode)
         return self.__decode(cur_gen)
 
     def __decode(self, cur_gen: BCGen) -> Any:
+        """Internal decode function, recursivly decodes bencode string
+
+        cur_gen -- bencode string generator to continue from 
+        """
         ch = next(cur_gen)
         if ch == 'i': # Number
             return self.__decode_int(cur_gen)
@@ -46,6 +56,7 @@ class Bencode():
             raise ValueError(f"{ch} is no valid type in bcode!")
 
     def __decode_int(self, gen: BCGen) -> int:
+        """Decodes bencode number"""
         out: str = ""
         for n in gen:
             if n == 'e':
@@ -53,10 +64,35 @@ class Bencode():
             out += n
         return int(out)
 
-
     def __decode_str(self, str_len: int, gen: BCGen) -> str:
+        """Decodes bencode str"""
         out: str = ""
         for _ in range(str_len):
             out += next(gen)
 
         return out
+
+    def encode(self, data: Any) -> str:
+        """Encodes given data to bencode string
+        
+        Keyword arguments:
+        data -- Any data that will be converted
+        """
+        out: str = ""
+        val: Any
+        key: Any
+        if isinstance(data, list):
+            for val in data:
+                out += self.encode(val)
+            return f"l{out}e"
+        elif isinstance(data, dict):
+            for key, val in data.items():
+                out += self.encode(key)
+                out += self.encode(val)
+            return f"d{out}e"
+        elif isinstance(data, int):
+            return f"i{data}e"
+        elif isinstance(data, str):
+            return f"{len(data)}:{data}"
+        else:
+            raise ValueError("Data is of unknown type")
