@@ -2,7 +2,6 @@ from typing import Any
 import json
 import sys
 from hashlib import sha1
-from shutil import copyfile
 
 from app.bencode import Bencode 
 
@@ -26,7 +25,6 @@ def main():
 
         print(decode(bencoded_value))
     elif command == "info":
-        copyfile(sys.argv[2], "./log.torrent")
         with open(sys.argv[2], "rb") as f:
             info: dict[str, Any] = bc.decode(f.readline())
             info_hash = sha1(bc.encode(info["info"]).encode())
