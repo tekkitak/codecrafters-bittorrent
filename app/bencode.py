@@ -73,9 +73,7 @@ class Bencode():
             for _ in range(str_len):
                 out += next(gen)
         except Exception as err:
-            print(out)
-            print(err)
-            print(str_len)
+            print(f"ERROR: \n\t{out=}\n\t{err=}\n\t{str_len=}")
             exit()
 
         return out
