@@ -30,10 +30,12 @@ class Bencode():
         """
         ch = next(cur_gen)
         if ch == b'i': # Number
+            print("DEBUG: getting int", file=sys.stderr)
             return self.__decode_int(cur_gen)
         elif ch == b'l': # List
             l: list[Any] = []
             while True:
+                print("DEBUG: getting list", file=sys.stderr)
                 decoded: Any = self.__decode(cur_gen)
                 if decoded is True:
                     print("DEBUG: ending list", file=sys.stderr)
@@ -41,6 +43,7 @@ class Bencode():
                 l.append(decoded)
             return l
         elif ch == b'd': # Dict
+            print("DEBUG: getting dictionary", file=sys.stderr)
             d: dict[Any, Any] = {}
             while True:
                 decoded: Any = self.__decode(cur_gen)
@@ -49,8 +52,10 @@ class Bencode():
                 d[decoded] = self.__decode(cur_gen)
             return d
         elif ch == b'e': # End of block
+            print("DEBUG: end of block", file=sys.stderr)
             return True
         elif ch.isdigit():
+            print("DEBUG: getting digit", file=sys.stderr)
             s_len = ch
             while ch != b':':
                 ch = next(cur_gen)
