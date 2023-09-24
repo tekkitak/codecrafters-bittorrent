@@ -28,7 +28,6 @@ def main():
         with open(sys.argv[2], "rb") as f:
             info: dict[str, Any] = bc.decode(f.readline())
             info_hash = sha1(bc.encode(info["info"]))
-            print("DEBUG: ", bytes(bc.encode(info["info"])), file=sys.stderr)
             print(f"Tracker URL: {info['announce']}")
             print(f"Length: {info['info']['length']}")
             print(f"Info Hash: {info_hash.hexdigest()}")

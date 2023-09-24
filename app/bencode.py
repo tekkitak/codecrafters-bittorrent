@@ -55,7 +55,7 @@ class Bencode():
             print("DEBUG: end of block", file=sys.stderr)
             return True
         elif ch.isdigit():
-            print("DEBUG: getting digit", file=sys.stderr)
+            print("DEBUG: getting str", file=sys.stderr)
             s_len = ch
             while ch != b':':
                 ch = next(cur_gen)
@@ -113,8 +113,12 @@ class Bencode():
             return bytes(out)
         elif isinstance(data, int): # Integer
             return f"i{data}e".encode()
-        elif isinstance(data, str) or isinstance(data, bytes): # String
+        elif isinstance(data, str): # String
+            print(data, file=sys.stderr)
             return f"{len(data)}:{data}".encode()
+        elif isinstance(data, bytes):
+            print(data, file=sys.stderr)
+            return str(len(data)).encode()+data
         else:
             print(f"ERROR: {data=}", file=sys.stderr)
             raise ValueError("Data is of unknown type")
