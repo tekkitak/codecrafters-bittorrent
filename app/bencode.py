@@ -70,12 +70,12 @@ class Bencode():
         """Decodes bencode str"""
         out: str = ""
         try:
-            print("Str length: ", str_len, file=sys.stderr)
             for _ in range(str_len):
                 out += next(gen)
         except Exception as err:
             print(out)
             print(err)
+            print(str_len)
             exit()
 
         return out
