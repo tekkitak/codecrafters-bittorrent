@@ -90,18 +90,22 @@ class Bencode():
         Keyword arguments:
         data -- Any data that will be converted
         """
-        out: bytearray = bytearray(b'')
+        out: bytearray
         val: Any
         key: Any
         if isinstance(data, list): # List
+            out = bytearray(b'l')
             for val in data:
                 out += self.encode(val)
-            return f"l{out}e".encode()
+            out += b'e'
+            return bytes(out)
         elif isinstance(data, dict): # Dictionary
+            out = bytearray(b'd')
             for key, val in data.items():
                 out += self.encode(key)
                 out += self.encode(val)
-            return f"d{out}e".encode()
+            out += b'e'
+            return bytes(out)
         elif isinstance(data, int): # Integer
             return f"i{data}e".encode()
         elif isinstance(data, str) or isinstance(data, bytes): # String
