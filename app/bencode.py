@@ -1,4 +1,5 @@
 from typing import Any, Generator
+import sys
 
 BCGen = Generator[str, None, bool]
 class Bencode():
@@ -68,7 +69,7 @@ class Bencode():
         """Decodes bencode str"""
         out: str = ""
         try:
-            print(str_len)
+            print(str_len, file=sys.stederr)
             for _ in range(str_len):
                 out += next(gen)
         except Exception as err:
