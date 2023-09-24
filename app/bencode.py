@@ -9,6 +9,7 @@ class Bencode():
 
     def __string_gen(self, string: bytes) -> BCGen:
         """Internal string generator"""
+        print("String: \n", string, file=sys.stderr)
         for char in string:
             yield chr(char)
         return True
@@ -69,7 +70,7 @@ class Bencode():
         """Decodes bencode str"""
         out: str = ""
         try:
-            print(str_len, file=sys.stderr)
+            print("Str length: ", str_len, file=sys.stderr)
             for _ in range(str_len):
                 out += next(gen)
         except Exception as err:
