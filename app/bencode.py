@@ -12,6 +12,7 @@ class Bencode():
         print("Stderr:\n", string, "\n", file=sys.stderr)
         for char in string:
             yield bytes([char])
+        yield b''
         return True
 
     def decode(self, bcode: bytes) -> Any:
