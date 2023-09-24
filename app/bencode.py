@@ -68,6 +68,7 @@ class Bencode():
         """Decodes bencode str"""
         out: str = ""
         try:
+            print(str_len)
             for _ in range(str_len):
                 out += next(gen)
         except Exception as err:
