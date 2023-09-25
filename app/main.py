@@ -11,11 +11,11 @@ bc = Bencode()
 peer_id:int = 16714_65761_65787_15794
 port:int = 1337
 
-def get_info(bcode: bytes) -> Tuple[str, str, dict[str, Any]]:
+def get_info(bcode: bytes) -> Tuple[str, dict[str, Any]]:
     bencode_data: dict[str, Any] 
     try:
         bencode_data = bc.decode(bcode)
-        return bencode_data['announce'], bencode_data["created by"], bencode_data['info']
+        return bencode_data['announce'], bencode_data['info']
     except Exception as error:
         print(error)
         print(bencode_data)
@@ -48,7 +48,7 @@ def main():
         announce: str
         info: dict[str, Any]
         with open(sys.argv[2], "rb") as f:
-            announce, _, info = get_info(b"".join(f.readlines()))
+            announce, info = get_info(b"".join(f.readlines()))
         info_hash = sha1(bc.encode(info))
 
         print(f"Tracker URL: {announce}")
@@ -62,7 +62,7 @@ def main():
         announce: str
         info: dict[str, Any]
         with open(sys.argv[2], "rb") as f:
-            announce, _, info = get_info(b"".join(f.readlines()))
+            announce, info = get_info(b"".join(f.readlines()))
         info_hash = sha1(bc.encode(info))
 
         params = {
