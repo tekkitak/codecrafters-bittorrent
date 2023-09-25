@@ -5,10 +5,12 @@ BCGen = Generator[bytes, None, bool]
 class Bencode():
     """Decode and encode bencode"""
     def __init__(self):
-        self.cur_gen: BCGen|None = None
+        self.cur_gen: BCGen|None
+        self.org_str: bytes
 
     def __string_gen(self, string: bytes) -> BCGen:
         """Internal string generator"""
+        self.org_str = string
         for char in string:
             yield bytes([char])
         while True:
@@ -60,6 +62,7 @@ class Bencode():
             except (UnicodeDecodeError, AttributeError):
                 return out
         else:
+            print(f"{self.org_str}", file=sys.stderr)
             raise ValueError(f"{ch} is no valid type in bcode!")
 
     def __decode_int(self, gen: BCGen) -> int:
