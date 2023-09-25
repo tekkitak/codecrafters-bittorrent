@@ -20,7 +20,7 @@ def decode(bcode: bytes):
 def piece_hashes(pieces: bytes) -> list[str]:
     hashes: list[str] = []
     for piece in [pieces[i:i+20] for i in range(0, len(pieces), 20)]:
-        hashes.append(sha1(piece).hexdigest())
+        hashes.append(piece.hex())
     return hashes
 
 def main():
