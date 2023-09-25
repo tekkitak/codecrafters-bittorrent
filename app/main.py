@@ -12,8 +12,14 @@ peer_id:int = 16714_65761_65787_15794
 port:int = 1337
 
 def get_info(bcode: bytes) -> Tuple[str, str, dict[str, Any]]:
-    bencode_data: dict[str, Any] = bc.decode(bcode)
-    return bencode_data['announce'], bencode_data["created by"], bencode_data['info']
+    bencode_data: dict[str, Any] 
+    try:
+        bencode_data = bc.decode(bcode)
+        return bencode_data['announce'], bencode_data["created by"], bencode_data['info']
+    except Exception as error:
+        print(error)
+        print(bencode_data)
+        exit()
 
 def decode(bcode: bytes):
     def bytes_to_str(data: Any) -> str:
@@ -77,7 +83,6 @@ def main():
             peer_ip = ".".join([str(byte) for byte in peer_data[:4]])
             peer_port: int = int.from_bytes(peer_data[4:], "big")
             print(f"{peer_ip}:{peer_port}")
-
     elif command == "debug":
         with open(sys.argv[2], "rb") as f:
             info: dict[str, Any] = bc.decode(b''.join(f.readlines()))
