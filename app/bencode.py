@@ -9,7 +9,6 @@ class Bencode():
 
     def __string_gen(self, string: bytes) -> BCGen:
         """Internal string generator"""
-        print("Stderr:\n", string, "\n", file=sys.stderr)
         for char in string:
             yield bytes([char])
         while True:
@@ -30,12 +29,10 @@ class Bencode():
         """
         ch = next(cur_gen)
         if ch == b'i': # Number
-            print("DEBUG: getting int", file=sys.stderr)
             return self.__decode_int(cur_gen)
         elif ch == b'l': # List
             l: list[Any] = []
             while True:
-                print("DEBUG: getting list", file=sys.stderr)
                 decoded: Any = self.__decode(cur_gen)
                 if decoded is True:
                     print("DEBUG: ending list", file=sys.stderr)
@@ -43,24 +40,20 @@ class Bencode():
                 l.append(decoded)
             return l
         elif ch == b'd': # Dict
-            print("DEBUG: getting dictionary", file=sys.stderr)
             d: dict[Any, Any] = {}
             while True:
                 decoded: Any = self.__decode(cur_gen)
                 if decoded is True:
                     break
                 d[decoded] = self.__decode(cur_gen)
-            print(f"Final: {d=}", file=sys.stderr)
             return d
         elif ch == b'e': # End of block
-            print("DEBUG: end of block", file=sys.stderr)
             return True
         elif ch.isdigit():
             s_len = ch
             while ch != b':':
                 ch = next(cur_gen)
                 s_len += ch
-            print(f"DEBUG: getting str of length {s_len}", file=sys.stderr)
             out = self.__decode_str(int(s_len[:-1]), cur_gen)
             try:
                 return out.decode()
@@ -117,7 +110,7 @@ class Bencode():
         elif isinstance(data, str): # String
             return f"{len(data)}:{data}".encode()
         elif isinstance(data, bytes):
-            return str(len(data)).encode()+data
+            return f"{len(data)}:".encode()+data
         else:
             print(f"ERROR: {data=}", file=sys.stderr)
             raise ValueError("Data is of unknown type")
