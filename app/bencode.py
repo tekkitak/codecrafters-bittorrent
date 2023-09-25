@@ -50,6 +50,7 @@ class Bencode():
                 if decoded is True:
                     break
                 d[decoded] = self.__decode(cur_gen)
+            print(f"Final: {d=}", file=sys.stderr)
             return d
         elif ch == b'e': # End of block
             print("DEBUG: end of block", file=sys.stderr)
@@ -114,10 +115,8 @@ class Bencode():
         elif isinstance(data, int): # Integer
             return f"i{data}e".encode()
         elif isinstance(data, str): # String
-            print(data, file=sys.stderr)
             return f"{len(data)}:{data}".encode()
         elif isinstance(data, bytes):
-            print(data, file=sys.stderr)
             return str(len(data)).encode()+data
         else:
             print(f"ERROR: {data=}", file=sys.stderr)

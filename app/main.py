@@ -3,7 +3,7 @@ import json
 import sys
 from hashlib import sha1
 
-from app.bencode import Bencode 
+from app.bencode import Bencode
 
 bc = Bencode()
 
