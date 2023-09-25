@@ -1,7 +1,7 @@
-from typing import Any, Generator
+from typing import Any, Generator, TypeAlias
 import sys
 
-BCGen = Generator[bytes, None, bool]
+BCGen: TypeAlias = Generator[bytes, None, bool]
 class Bencode():
     """Decode and encode bencode"""
     def __init__(self):

@@ -1,11 +1,19 @@
-from typing import Any
+from typing import Any, Tuple
 import json
 import sys
 from hashlib import sha1
+import requests as rq
+import urllib.parse 
 
 from app.bencode import Bencode
 
 bc = Bencode()
+peer_id:int = 16714_65761_65787_15794
+port:int = 1337
+
+def get_info(bcode: bytes) -> Tuple[str, str, dict[str, Any]]:
+    bencode_data: dict[str, Any] = bc.decode(bcode)
+    return bencode_data['announce'], bencode_data["created by"], bencode_data['info']
 
 def decode(bcode: bytes):
     def bytes_to_str(data: Any) -> str:
@@ -31,11 +39,10 @@ def main():
 
         print(decode(bencoded_value))
     elif command == "info":
+        announce: str
+        info: dict[str, Any]
         with open(sys.argv[2], "rb") as f:
-            bencode_data: dict[str, Any] = bc.decode(b''.join(f.readlines()))
-        info: dict[str, Any] = bencode_data['info']
-        announce: str = bencode_data['announce']
-        # created_by: str = bencode_data['created_by']
+            announce, _, info = get_info(b"".join(f.readlines()))
         info_hash = sha1(bc.encode(info))
 
         print(f"Tracker URL: {announce}")
@@ -45,6 +52,32 @@ def main():
         print("Piece Hashes:")
         for piece_hash in piece_hashes(info['pieces']):
             print(piece_hash)
+    elif command == "peers":
+        announce: str
+        info: dict[str, Any]
+        with open(sys.argv[2], "rb") as f:
+            announce, _, info = get_info(b"".join(f.readlines()))
+        info_hash = sha1(bc.encode(info))
+
+        params = {
+            "info_hash": info_hash.digest(),
+            "peer_id": peer_id,
+            "port": port,
+            "uploaded": 0,
+            "downloaded": 0,
+            "left": info["length"],
+            "compact": 1,
+        }
+        response = rq.get(announce, params=params, timeout=1000)
+
+        data: dict[str,str|int|bytes]= bc.decode(response.content)
+
+        peer_data: bytes
+        for peer_data in [data["peers"][i:i+6] for i in range(0,len(data["peers"]), 6)]: # type: ingore
+            peer_ip = ".".join([str(byte) for byte in peer_data[:4]])
+            peer_port: int = int.from_bytes(peer_data[4:], "big")
+            print(f"{peer_ip}:{peer_port}")
+
     elif command == "debug":
         with open(sys.argv[2], "rb") as f:
             info: dict[str, Any] = bc.decode(b''.join(f.readlines()))
