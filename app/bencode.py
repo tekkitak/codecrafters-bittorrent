@@ -56,11 +56,11 @@ class Bencode():
             print("DEBUG: end of block", file=sys.stderr)
             return True
         elif ch.isdigit():
-            print("DEBUG: getting str", file=sys.stderr)
             s_len = ch
             while ch != b':':
                 ch = next(cur_gen)
                 s_len += ch
+            print(f"DEBUG: getting str of length {s_len}", file=sys.stderr)
             out = self.__decode_str(int(s_len[:-1]), cur_gen)
             try:
                 return out.decode()
